@@ -74,7 +74,9 @@ def video_callback_func(frame):
 
 # Stream video from webcam
 webrtc_streamer(key='registration', video_frame_callback=video_callback_func,
-rtc_configuration={"iceServers": [{"urls": ["stun:stun.xten.com:3478"]}]},
+rtc_configuration={
+        "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
+    } 
     
  )
 
