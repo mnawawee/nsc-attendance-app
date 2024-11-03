@@ -44,11 +44,17 @@ def video_frame_callback(frame):
     return av.VideoFrame.from_ndarray(pred_img, format="bgr24") 
 
 
-webrtc_streamer(key="RealTimePrediction", video_frame_callback=video_frame_callback,
-rtc_configuration={
-        "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
+webrtc_streamer(
+    key="RealTimePrediction",
+    video_frame_callback=video_frame_callback,
+    rtc_configuration={
+        "iceServers": [
+            {"urls": ["stun:stun.l.google.com:19302"]},  # Google STUN server
+            {"urls": ["turn:13.60.56.214:5349"]}        # Your TURN server
+        ]
     }          
 )
+
 
 hide_streamlit_style= """
 <style>
