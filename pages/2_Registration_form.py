@@ -78,7 +78,16 @@ webrtc_streamer(
     video_frame_callback=video_callback_func,
     rtc_configuration={
         "iceServers": [
-            {"urls": ["stun:stun.l.google.com:19302"]},  # STUN server
+             { "urls": "stun:stun.l.google.com:19302" },
+             { "urls": "stun:stun.l.google.com:5349" },
+             { "urls": "stun:stun1.l.google.com:3478" },
+             { "urls": "stun:stun1.l.google.com:5349" },
+             { "urls": "stun:stun2.l.google.com:19302" },
+             {"urls": "stun:stun2.l.google.com:5349" },
+             { "urls": "stun:stun3.l.google.com:3478" },
+             { "urls": "stun:stun3.l.google.com:5349" },
+             { "urls": "stun:stun4.l.google.com:19302" },
+             { "urls": "stun:stun4.l.google.com:5349" }  # STUN server
           
         ]
     }
