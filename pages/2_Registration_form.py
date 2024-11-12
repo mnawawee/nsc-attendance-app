@@ -56,7 +56,8 @@ role = st.selectbox(
         'Cyber Security',
         'Server and Cloud',
         'Data Harmonization',
-        'Project Management'
+        'Project Management',
+        'CGC'
     )
 )
 
