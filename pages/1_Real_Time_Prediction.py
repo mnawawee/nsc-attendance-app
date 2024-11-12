@@ -48,7 +48,7 @@ webrtc_streamer(
     key="RealTimePrediction",
     video_frame_callback=video_frame_callback,
     rtc_configuration={
-         "iceServers": [{"urls": ["stun:stun.l.google.com:3478"]}]
+        "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
     }          
 )
 
