@@ -13,9 +13,9 @@ from datetime import datetime
 
 import os
 # connect to redis database
-hostname = 'redis-19064.c10.us-east-1-4.ec2.redns.redis-cloud.com'
-portNum = 19064
-password ='zyMJ3Qc07ykhj3BuCKaiBV4s7b1maDSm'
+hostname = 'redis-19189.c265.us-east-1-2.ec2.redns.redis-cloud.com'
+portNum = 19189
+password ='K8d79Sya68RuIctlYOBsQk9Amgm7hqmY'
 
 r=redis.StrictRedis(host=hostname,
                     port=portNum,
