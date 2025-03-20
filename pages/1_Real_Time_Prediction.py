@@ -1,74 +1,62 @@
 from navigation import make_sidebar
 import streamlit as st
 from Home import face_rec
-import cv2
+from streamlit_webrtc import webrtc_streamer
+import av
 import time
-import numpy as np
-from PIL import Image
-
 make_sidebar()
-
+# st.set_page_config(page_title='Prediction')
 st.markdown('<h3 style="color:green;">Mark Attendance</h3>', unsafe_allow_html=True)
 
-# Retrieve the data from Redis Database
-with st.spinner('Retrieving Data from Db...'):
+
+
+
+# Retrive the data from Redis Database
+with st.spinner('Retriving Data from Db..'):
     redis_face_db = face_rec.retrive_data(name='academy:register')
     st.dataframe(redis_face_db)
 
-st.success('Data successfully retrieved from database')
+st.success('Data sucessfully retrived from database')
 
-# Time settings
-waitTime = 3  # Time in seconds
-setTime = time.time()
-realtimepred = face_rec.RealTimePred()  # Real-time prediction class
+# time
+waitTime = 3# time in sec
+setTime = time.time() 
+realtimepred = face_rec.RealTimePred()# real time prediction class
 
-# Streamlit UI Components
-stframe = st.empty()
-start_button = st.button("Start Attendance Marking")
-stop_button = st.button("Stop Attendance Marking")
+# Real Time Prediction
+#streamlit webrtc
 
-# OpenCV Video Capture
-cap = cv2.VideoCapture(0)
-
-if start_button:
-    st.session_state["attendance_running"] = True
-
-if stop_button:
-    st.session_state["attendance_running"] = False
-
-# Process video stream
-if "attendance_running" not in st.session_state:
-    st.session_state["attendance_running"] = False
-
-while st.session_state["attendance_running"]:
-    ret, frame = cap.read()
-    if not ret:
-        st.error("Failed to capture video")
-        break
-
-    img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
-    # Perform face recognition and prediction
-    pred_img = realtimepred.face_prediction(
-        img, redis_face_db, 'facial_feature', ['Name', 'Role'], thresh=0.5
-    )
-
-    # Save logs to Redis every waitTime seconds
+#callback function
+def video_frame_callback(frame):
+    global setTime
+    img = frame.to_ndarray(format="bgr24")# is 3 dimentsion numpy array
+    #operation that you can perform on the array
+    pred_img =realtimepred.face_prediction(img,redis_face_db,
+                                        'facial_feature',['Name','Role'],thresh=0.5)
+    
     timenow = time.time()
-    if (timenow - setTime) >= waitTime:
+    difftime =timenow - setTime
+    if difftime >= waitTime:
         realtimepred.saveLogs_redis()
-        setTime = time.time()  # Reset time
-        print('Saved data to database')
+        setTime = time.time() #reset time
+        print('Save data to database')
+    
+    return av.VideoFrame.from_ndarray(pred_img, format="bgr24") 
 
-    # Display the processed image in Streamlit
-    stframe.image(Image.fromarray(pred_img), use_container_width=True)
 
-cap.release()
-cv2.destroyAllWindows()
+webrtc_streamer(
+    key="RealTimePrediction",
+    video_frame_callback=video_frame_callback,
+    rtc_configuration={
+        "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
+    }          
+)
 
-# Hide Streamlit's default main menu
-st.markdown("""
+
+hide_streamlit_style= """
 <style>
 #MainMenu {visibility: hidden;}
 </style>
-""", unsafe_allow_html=True)
+"""
+
+st.markdown(hide_streamlit_style,unsafe_allow_html=True)
